@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5.3 images and videos</title>
+    <link rel="icon" href="nwjnslogo.jpg">
+    <style>
+        :root {
+            --scale-factor: 1; /* table&video size */
+            --table-translate-x: -50px; /* slide adjustment */
+        }
+
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('nwjns.jpg');
+            background-size: cover;
+            background-position: center;
+            overflow: hidden;
+            font-family: Arial, sans-serif
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        table {
+            width: calc(600px * var(--scale-factor));
+            border-collapse: collapse;
+            text-align: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            transition: transform 1s ease; /* table slide trans */
+            position: relative;
+            z-index: 1; /* video trans to table */
+            transform: translateX(var(--table-translate-x)); /* controls table position */
+        }
+
+        td {
+            border: none;
+            padding: 0;
+            cursor: pointer;
+            transition: transform 0.3s; /* scaling effect transition */
+        }
+
+        .row-single {
+            height: calc(150px * var(--scale-factor));
+        }
+
+        .row-multiple td {
+            width: calc(80px * var(--scale-factor));
+            height: calc(80px * var(--scale-factor));
+        }
+
+        img {
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+            cursor: pointer;
+            transition: transform 0.3s ease; /* scaling effect transition */
+        }
+
+        img:hover {
+            transform: scale(1.10); /* scale up effect on hover */
+        }
+
+        #videoContainer {
+            display: none;
+            position: absolute;
+            top: 50%;
+            /* left: 750px; */         /* adjustment */
+            right: 50px; 
+            transform: translateX(100%) translateY(-50%); /* off-screen position (right) */
+            width: calc(50% * var(--scale-factor)); 
+            height: calc(77% * var(--scale-factor)); 
+            background-color: black;
+            transition: transform 1s ease, opacity 0.5s ease; /* slide&fade transition */
+            opacity: 0; /* invisible */
+            z-index: 0;
+        }
+
+        #videoContainer.loaded {
+            opacity: 1; /* fade in when video is loaded */
+        }
+
+        #videoContainer.video-visible {
+            transform: translateX(0) translateY(-50%); /* slide video into view */
+        }
+
+        #videoContainer video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .centered {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+        .watermark {
+            position: fixed;
+            top: 20px; 
+            left: 20px; 
+            opacity: 0.5;
+            font-size: 24px;
+            color: rgb(255, 255, 255); 
+            pointer-events: none; 
+        }
+    </style>
+</head>
+<body>
+    <div class="watermark">Jr Aban</div>
+    <div class="container centered" id="contentContainer">
+        <table id="imageTable">
+            <tr>
+                <td colspan="7" class="row-single cell-a">
+                    <img src="ditto.jpg" alt="Image A" onclick="showVideo('dittomv.mp4')">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7" class="row-single cell-b">
+                    <img src="cookie.jpg" alt="Image B" onclick="showVideo('cookiemv.mp4')">
+                </td>
+            </tr>
+            <tr>
+                <td colspan="7" class="row-single cell-c">
+                    <img src="omg.webp" alt="Image C" onclick="showVideo('omgmv.mp4')">
+                </td>
+            </tr>
+            <tr class="row-multiple">
+                <td><img src="eta.jpg" alt="Image D" onclick="showVideo('etamv.mp4')"></td>
+                <td><img src="how sweet.jfif" alt="Image E" onclick="showVideo('how sweetmv.mp4')"></td>
+                <td><img src="ournight.webp" alt="Image F" onclick="showVideo('ournightmv.mp4')"></td>
+                <td><img src="hypeboy.jpg" alt="Image G" onclick="showVideo('hypeboymv.mp4')"></td>
+                <td><img src="attention.jfif" alt="Image H" onclick="showVideo('attentionmv.mp4')"></td>
+                <td><img src="supershy.jfif" alt="Image I" onclick="showVideo('supershymv.mp4')"></td>
+                <td><img src="bubblegum.jfif" alt="Image J" onclick="showVideo('bubblegummv.mp4')"></td>
+            </tr>
+        </table>
+
+        <div id="videoContainer">
+            <video id="videoPlayer" controls autoplay>
+                <source id="videoSource" type="video/mp4">
+                
+            </video>
+        </div>
+    </div>
+
+    <script>
+        let tableMoved = false;
+
+        function showVideo(videoSrc) {
+            const table = document.getElementById('imageTable');
+            const videoContainer = document.getElementById('videoContainer');
+            const videoPlayer = document.getElementById('videoPlayer');
+            const videoSource = document.getElementById('videoSource');
+
+            videoSource.src = videoSrc;
+            videoPlayer.load();
+            videoContainer.style.display = 'block';
+
+            // move table to the left and slide video in from the right
+            if (!tableMoved) {
+                // move table to the left side
+                table.style.transform = `translateX(calc(var(--table-translate-x) - 350px))`; // table places adjustment
+
+                // class to trigger video slide in
+                videoContainer.classList.add('video-visible');
+                videoContainer.classList.add('loaded'); // fade-in effect
+
+                tableMoved = true;
+            }
+
+            videoPlayer.play();
+        }
+    </script>
+</body>
+</html>
